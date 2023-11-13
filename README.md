@@ -1,9 +1,13 @@
 
 
-# 구름 패턴 분류 모델
-![AI 변호사](doc/AI_lawyer.jpg)
+# ☁️ 구름 패턴 분류 모델 ☁️
+<div align="center">
 
-딥러닝을 통해 사례와 유사한 재판선례를 통해 빠르게 추천하여 고객들에게 쉬운 정보 제공을 해주고, 전문가를 보조해주는 시스템입니다.
+<img src="doc/Kor_pred2023-04-20(09).png" width="600" height="400"> 
+
+</div>
+</br>
+위성사진에서 강수확률과 관련된 구름을 디텍팅하여 기상예보 분석을 보조해주는 딥러닝 모델 설계 및 개발 레포입니다.
 
 ## 👨🏿‍🤝‍👨🏿Member
 [노아윤](https://github.com/ayun3738) | [유미리](https://github.com/Yu-Miri) |[이기준](https://github.com/gijun0725)
@@ -19,67 +23,74 @@
 
 ## 📝Project Summary
 - 개요
-  > 딥러닝을 통해 사례와 유사한 재판선례를 통해 빠르게 추천하여 고객들에게 쉬운 정보 제공을 해주고, 전문가를 보조해주는 시스템 개발
+  > 위성사진에서 구름의 패턴을 빠르게 디텍팅하여 기상예보 분석을 보조해줄 수 있는 딥러닝 모델 설계
 - 목적 및 배경
-![로톡현황](doc/배경2.png)
-    > 법률 플랫폼 로톡이 서비스 출시 8년 누적 방문자 3070만명을 달성. 누적 법률상담 건수는 약 74만건, 이용자 만족도는 4.89(5점만점)을 기록했습니다. 또한 알기 어려운 법률지식에 관한 정보 접근성이 낮은 일반인중 25%는 로톡을 이용해본 적 있다는 지표도 기사에 같이 있습니다.\
-    출처 : https://zdnet.co.kr/view/?no=20220725104905
+![단기예보관](doc/배경1.png)
+    > 기상청에서는 AI 인공지능을 이용한 수치형 table 데이터 통계모델을 사용하는 것으로 알려져 있습니다. 하지만 초단기 일기예보는 10분마다 들어오는 자료들을 분석해야합니다. 자동화된 자료들 사이에서도 결국 종합적인 분석은 예보관이 합니다.
 
-    ![로톡현황](doc/배경1.png)
-    > 로톡은 순수하게 정보비대칭성이 심한 법률분야에서의 이용자와 변호사를 1대1 매칭시켜주는 플랫폼 자체로 매출을 창출했습니다. 서비스 내에서의 별도 수수료 없이 광고주 변호사들이 선택적으로 진행하는 광고비를 통해서만 수익을 올리고 있습니다.\
-    출처 : https://m.wowtv.co.kr/NewsCenter/News/Read?articleId=A202212270077#_PA
-  
- 💡 우리의 AI 모델을 사용한다면 **기존 판례**들과 상담 사례를 비교하여 가장 유사했던 판례를 추천해줌으로 **승소나 형량** 등 변호사와 이용자에게 빠르게 참고할 수 있는 정보 제공이 가능할 것으로 생각했습니다.
+    출처 : https://www.youtube.com/watch?v=bMpBXqjuGlI
+
+<div align="center">
+
+<img src="doc/sugar1.png" width="300" height="200"> 
+<img src="doc/flower1.png" width="300" height="200"> 
+</div>
+    
+  > 위성사진 상에서 구름의 형태에 따라 강수량에 영향을 줄 수 있다는 보고와 함께 정성적으로 라벨링된 데이터셋을 발견하게 됐습니다. 이 데이터셋을 활용하여 Object Detection 모델을 학습시킨다면, 구름의 형태에 따라 강수량의 유추가 가능할 수 있게 구름의 모양을 실시간으로 디텍팅할 수 있습니다.
+
+  출처 : https://rmets.onlinelibrary.wiley.com/doi/full/10.1002/qj.3662
+
+ 💡 우리의 AI 모델을 사용한다면,
+  1. 예보관에게 가시적으로 상황을 알려줄 수 있습니다. 경력이 상당한 예보관이나 기상학자분들은 바로 구름형태를 보고 빠른 판단을 할 수 있겠지만, 신입 예보관 등의 상황에 지침으로 구름의 형태를 실시간 모니터링하며 변하는 모습과 흐르는 방향을 볼 수 있습니다.
+  2. 구간별 지역별 디텍팅 카운팅이나 디텍팅 확률 등을 수치형 table 데이터의 자료로 추가 제공하여 통계모델을 더 깊이 있게 활용하는 보조로서의 가치가 있을 것이라 생각했습니다.
   
 - 모델 설계
-  > 판례문은 여러개의 문장으로 구상됐고, 판례문마다의 분야도 분류되어 기록되고 있습니다. 따라서 상담 사례의 문장들과 각 판례문의 문장들을 통해 유사도를 기반으로 랭크를 나열하여 가장 관련있다고 판단되는 판례문을 output으로 추천해야 합니다. 이를 위해 Sentence-BERT 모델을 통해 문장임베딩을 추출합니다. \
-  꼭 실시간으로 유사 판례문들을 나열할 필요는 없다고 판단하여 정확도에 더 중점을 주어 데이터와 모델을 선정했습니다.
-- 기대효과
-  > 유사 판례문을 통해 엄청난 양의 판례문들을 전부 뒤져보는 수고를 줄여 변호사 입장에서 시간, 금전적으로 경제적인 효과를 기대할 수 있고, 일반인 입장에서는 판례를 통해 각자의 상황이 어느정도 금액과 시간투자를 해야하는지에 대한 정보제공이 가능할 것입니다.
+  > 위성사진을 input 이미지로 받았을 때, 가능성 있는 위치에 어떤 패턴인지 알아야 하기 때문에 Object Detection이나 Segmentation 기법을 이용해 구름 패턴을 파악하기로 설계했습니다. Object Detection이 통상적으로 잘 되고 튜닝이 용이한 YOLO의 버전들을 확인하며 모델을 결정하기로 했습니다. 가시적으로 패턴을 잘 디텍팅하는지 확인하면서, mAP를 기준으로 모델을 선정했습니다.
+
 - 활용 장비 및 재료
-  - 라이브러리 : pytorch, sklearn 
-  - 개발 및 협업 툴 : python, colab notebook, vscode(windows), 
+  - 라이브러리 : pytorch, sklearn, OpenCV, roboflow, ultralytics
+  - 개발 및 협업 툴 : python, colab notebook, vscode(windows)
 
 ## 👀 데이터셋 
 
-초기 모델 설계 과정에서 결정한 Sentence-BERT를 fine-tuning하기 위해 한국어 문장들의 유사도가 라벨링되어있는 문장데이터셋이 필요합니다. 
+초기 모델 설계 과정에서 결정한 YOLO를 학습시키기 위해 라벨링된 위성사진이 필요합니다.
 
-### CaseNote 크롤링
-- 출처 : [CaseNote - 간편한 판례검색 서비스](https://casenote.kr/)
-- 소개 : 종합법률정보 사이트, 국가법령정보센터 등을 살펴보았을 때 판례문의 데이터가 너무 형식이 다 다르고 문어체도 다르기 때문에 어려움을 겪었습니다.
-하지만 casenote는 판례문들의 형식이 어느정도 맞춰져 있었고, 판례문의 구성 방법이나 프로젝트의 기간을 생각했을 때 적절한 데이터를 확보할 만큼의 판례문 양이 있었습니다.
-- 라벨 : 
-  1. 먼저 "하나의 판례문의 문장들은 하나의 판결에 대한 내용들로 구성되어 있으니 판결문 내에서의 문장들의 유사도는 평균적으로 높을 것이다." 라 가정했습니다.
-  2. 따라서 판결문 200개에 대한 문장 조합쌍을 python code를 통해 테이블형식 데이터로 구성했습니다.
-  3. 각 문장 조합쌍에 대해 SBERT에 통과시켜 문장 유사도를 Auto labeling하여 데이터셋을 구상했습니다.
-  
-- 전체 문장 쌍 개수 : 약 125,000
+### NASA WORLD VIEW
+- 출처 : [cloud types Computer Vision Project](https://universe.roboflow.com/roboflow-100/cloud-types)
+- 소개 : 2100 x 1400의 5050장의 나사에서 특정 위치에서 지속적으로 찍은 인공위성 사진입니다. 인공위성 사진이다 보니 이미지 노이즈로 태양빛이나 인공위성 지지대가 사진에 일부 포함되어 있습니다. 라벨당 2000장 이상의 충분한 데이터양이라고 판단하고 학습에 이용하기로 했습니다.
+- 라벨 : 총 4가지 패턴으로 구성됐으며, segmentation 라벨링은 없고 bounding box만 라벨링 되어 있습니다.
 
-### KLUE 데이터셋
-- 출처 : [KorNLI, KorSTS(카카오 브레인 깃허브)](https://github.com/kakaobrain/kor-nlu-datasets)
-- 소개 : 영어로 먼저 문장간의 유사도를 라벨링한 데이터를 한국어로 번역하여 데이터를 재구성한 데이터셋
-- 라벨 : 
-1. KorNLI(Kor Natural Language Inference) : 기존에 영어로 구성됐던 NLI 데이터셋의 문장을 한글로 번역한 데이터. 문장 Premise(전제), Hypothesis(가설)에 대해 **Entailment(일치하는 문장)**, **Contradiction(반대의미 문장)**, **Neutral(애매한 문장)** 의 3class로 라벨링되어 있습니다.
+<div align="center">
+<img src="doc/label_sugar.png"> 
+</div>
 
-| Example                                                      | English Translation                                          | Label         |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------- |
-| P: 저는, 그냥 알아내려고 거기 있었어요.<br />H: 이해하려고 노력하고 있었어요. | I was just there just trying to figure it out.<br />I was trying to understand. | Entailment    |
-| P: 저는, 그냥 알아내려고 거기 있었어요.<br />H: 나는 처음부터 그것을 잘 이해했다. | I was just there just trying to figure it out.<br />I understood it well from the beginning. | Contradiction |
-| P: 저는, 그냥 알아내려고 거기 있었어요.<br />H: 나는 돈이 어디로 갔는지 이해하려고 했어요. | I was just there just trying to figure it out.<br />I was trying to understand where the money went. | Neutral       |
-  
-2. KorSTS(Kor Semantic textual similarity) : 기존에 영어로 구성됐던 STS 데이터셋의 문장을 한글로 번역한 데이터. 두 문장에 대해 **0(관련 없음) ~ 5(문장의미가 일치)** 로 사람이 스코어를 메긴 점수로 라벨링이 되어 있습니다.
+> 주로 낮은 고도에서 관측되며 설탕을 뿌린 것 같이 여러 입자로 이루어진 미세 구름형태입니다. 강수와 연관성이 거의 없습니다. 
 
-| Example                                                      | English Translation                                      | Label |
-| ------------------------------------------------------------ | -------------------------------------------------------- | ----- |
-| 한 남자가 음식을 먹고 있다.<br />한 남자가 뭔가를 먹고 있다. | A man is eating food.<br />A man is eating something.    | 4.2   |
-| 한 비행기가 착륙하고 있다.<br />애니메이션화된 비행기 하나가 착륙하고 있다. | A plane is landing.<br />A animated airplane is landing. | 2.8   |
-| 한 여성이 고기를 요리하고 있다.<br />한 남자가 말하고 있다. | A woman is cooking meat.<br />A man is speaking.      | 0.0   |
+<div align="center">
+<img src="doc/label_gravel.png"> 
+</div>
+
+> 주로 대기의 불안정에 의해 발생하여 sugar구름으로부터 합쳐져 파생된 입도가 크고 밝은 구름입니다. 강수 연관성이 있습니다.
+
+<div align="center">
+<img src="doc/label_flower.png"> 
+</div>
+
+> Gravel 구름이 여러 덩어리로 뭉쳐져 넓게 퍼져있습니다. 규칙적인 모양을 띄며 기상 조건은 안정적입니다.
+
+<div align="center">
+<img src="doc/label_fish.png"> 
+</div>
+
+> 구름사이에 뼈대가 있는 듯한 모양이며 열대 저기압이 발생하는 곳에서 많이 관측되고 갑작스러운 폭우나 비가 예상되며 태풍으로의 발전 가능성도 있습니다.
+
+- 전체 라벨 분포 : [sugar - 3408(31.7%), gravel - 2674(24.9%), flower - 2141(19.9%), fish - 2528(23.5%) ] => 각 라벨당 2000장 이상의 넉넉한 데이터양이라고 판단했습니다.
 
 ## ⚙️ Modeling
 
-참고 깃허브 : https://github.com/jhgan00/ko-sentence-transformers
+YOLO의 다양한 버전, 다양한 이미지 전처리 방식으로 스코어를 확인하며 문제점을 파악하고 개선해 나갔습니다.
 
-### 1. 데이터 전처리(KULE 데이터)
+### 1. 데이터 전처리
 
 >- KorNLI : KorNLI 데이터에서 일치하는 문장 두개와 무작위의 반대의미 문장까지 3가지 문장쌍을 데이터셋으로 구성하는 Pairing 방식을 사용하여 구상했습니다.
 <div align="center">
@@ -116,50 +127,3 @@
 
 >- 기존 참고한 Sentence BERT 학습 코드에서 판결문 관련 custom 데이터를 추가함으로 유사 판결문을 더 잘 판별할 것으로 기대하였고, transformer도 바꿔가며 학습을 진행했습니다.
 >- 트레이닝 코드 : [training_last.py](training_last.py), [data_util.py](data_util.py)
-
-## 🔍 Conclusion
-
-### Inference
-
-#### 1. 문장 스코어 자체의 성능
-
-> 기존 reference로 학습된 open model인 SBERT를 SBERT-0로 잡고 학습시킨 모델들을 비교하기로 했습니다.
-
-<div align="center">
-<img src="doc/con1.png"> 
-</div>
-
-> - 실제 사례나 판례의 유사한 두 문장을 입력했을 때, 유사도의 성능을 측정한 결과 높게 측정되었습니다.
-
-<div align="center">
-<img src="doc/con2.png"> 
-</div>
-
-> - 실제 사례나 판례의 엉뚱한 두 문장을 입력했을 때, 유사도의 성능을 측정한 결과 낮게 측정되었습니다.
-- SBERT-0의 경우, 유사한 문장의 스코어가 애매한 0.5 부근으로 측정되어 적절한 모델이 아님으로 생각됐습니다.
-- SBERT-1의 경우, 엉뚱한 문장의 스코어가 애매한 0.5 부근으로 측정되어 적절한 모델이 아님으로 생각됐습니다.
-- SBERT-2의 경우, 유사한 문장과 엉뚱한 문장의 스코어가 둘 다 높은 수준으로 나와 적절한 모델이 아님으로 생각됐습니다.
-- 하지만 데이터를 늘린 SBERT-3의 경우, 유사한 문장과 엉뚱한 문장의 스코어가 어느정도 구분 가능한 수준으로 나와 적합한 방식의 학습이 진행됐다고 판단했습니다.
-
-#### 2. 실제 사례를 통한 유사 판결문 추천
-
-- 실제 상담사례를 가져와 넣었을 때, 의료판결문 중에서도 백내장 관련 판례를 가장 높은 유사성 판례로 추천해주는 것을 확인했습니다.
-
-<div align="center">
-<img src="doc/infer1.png"> 
-</div>
-
-### Conclusion & Extension
-1. 생성형 NLP에서 대표적인 BERT모델의 문장유사도를 통해 판결문의 각 문장과 연결지어 전체 판결문과의 유사도를 구하는 유사판례문 추천모델을 학습시켜 동작함을 확인했습니다.
-하지만 아직 그저 문장간 평균을 내거나, 유사 문장의 최대값으로 살펴본다던지하는 단순한 알고리즘으로 판결문을 도출합니다.
--> 모델의 output에서 가장 유사한 판결문을 판단하는 알고리즘을 개선시켜 좋은 시스템으로 발전시킬 수 있습니다.
-2. NLP 모델의 특성상 task에 잘 맞는 정제된 많은 문장이 필요합니다. 하지만 사이트 및 판결문마다 작성된 구조가 달라서 시간상 크롤링 데이터를 많이 담지 못한 점이 모델 성능의 아쉬운 점이라고 생각됩니다. 또한 데이터셋 생성 과정에서 cosine 유사도를 통한 labeling을 진행했는데, 이의 타당성을 검증하는 과정도 필요하다고 생각됩니다.
-3. 판결문 200개에서 문장 조합이 125000개로 불어나면서 많은 판례문을 타겟으로 삼을수 없어 우선 분야를 '의료'분야의 판례문만 가지고 프로젝트를 진행했지만, 이러한 방식으로 다른 분야에 맞는 여러 모델을 통해 판결문 추천도 가능할 것입니다.
-
-## ⚒️ Appendix
-
-
-| Reference | Git | Paper |
-| ---- | ---- | ---- |
-| SBERT 학습 코드 | https://github.com/jhgan00/ko-sentence-transformers| <a href='https://arxiv.org/abs/1908.10084'><img src='https://img.shields.io/badge/ArXiv-PDF-red'></a> &nbsp;
-| 카카오 브레인 KLUE | https://github.com/kakaobrain/kor-nlu-datasets | <a href='https://arxiv.org/abs/2004.03289'><img src='https://img.shields.io/badge/ArXiv-PDF-red'></a> &nbsp;
