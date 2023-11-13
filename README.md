@@ -60,11 +60,15 @@
 - 소개 : 2100 x 1400의 5050장의 나사에서 특정 위치에서 지속적으로 찍은 인공위성 사진입니다. 인공위성 사진이다 보니 이미지 노이즈로 태양빛이나 인공위성 지지대가 사진에 일부 포함되어 있습니다. 라벨당 2000장 이상의 충분한 데이터양이라고 판단하고 학습에 이용하기로 했습니다.
 - 라벨 : 총 4가지 패턴으로 구성됐으며, segmentation 라벨링은 없고 bounding box만 라벨링 되어 있습니다.
 
+#### 1. Sugar
+
 <div align="center">
 <img src="doc/label_sugar.png"> 
 </div>
 
 > 주로 낮은 고도에서 관측되며 설탕을 뿌린 것 같이 여러 입자로 이루어진 미세 구름형태입니다. 강수와 연관성이 거의 없습니다. 
+
+#### 2. Gravel
 
 <div align="center">
 <img src="doc/label_gravel.png"> 
@@ -72,11 +76,15 @@
 
 > 주로 대기의 불안정에 의해 발생하여 sugar구름으로부터 합쳐져 파생된 입도가 크고 밝은 구름입니다. 강수 연관성이 있습니다.
 
+#### 3. Flower
+
 <div align="center">
 <img src="doc/label_flower.png"> 
 </div>
 
 > Gravel 구름이 여러 덩어리로 뭉쳐져 넓게 퍼져있습니다. 규칙적인 모양을 띄며 기상 조건은 안정적입니다.
+
+#### 4. Fish
 
 <div align="center">
 <img src="doc/label_fish.png"> 
@@ -92,38 +100,26 @@ YOLO의 다양한 버전, 다양한 이미지 전처리 방식으로 스코어�
 
 ### 1. 데이터 전처리
 
->- KorNLI : KorNLI 데이터에서 일치하는 문장 두개와 무작위의 반대의미 문장까지 3가지 문장쌍을 데이터셋으로 구성하는 Pairing 방식을 사용하여 구상했습니다.
-<div align="center">
-<img src="doc/KLUE3.png"> 
-</div>
-
->- KorSTS : KorSTS 데이터에서 0~5의 점수를 **0 ~ 1**으로 normalization 했습니다.
+>- 해당 데이터셋을 제작할 때, 4가지 구름 패턴을 구름의 양 자체가 많은 것과 구름의 깊이가 다름을 통해 분류하였습니다. 구름 패턴을 파악하는 것에 각각 명도와 채도의 역할이 RGB 채널보다 역할이 많을 것으로 기대하여 HSV 채널로 구성했습니다.
 
 <div align="center">
-<img src="doc/KLUE1.png"> 
+<img src="doc/HSV_reason.png"> 
 </div>
 
-### 2. 데이터 전처리(크롤링 custom 데이터)
 
->- casenote에서 크롤링한 판례문들의 판례문에서 '이유' 부분의 텍스트가 판례의 내용을 담고 있다고 판단하여 그부분을 .csv 파일로 저장했습니다,
-<div align="center">
+## 🔍 Conclusion
 
-<img src="doc/크롤링데이터1.png" width="450" height="250"> 
-<img src="doc/크롤링데이터2.png" width="200" height="300">
+### Inference
 
-</div>
 
->- 이후 한글 외의 문자, 숫자를 제거하고, 데이터 특성상 판결문의 글머리(ex. 가, 나, 다)와 형식적 단어(ex. 사건개요) 등의 불용어 제거했습니다.
 
-<div align="center">
-<img src="doc/크롤링데이터3.png"> 
-</div>
+### Conclusion & Extension
 
->- 그 뒤 하나의 판결문에 대해 문장들을 분리하여 각각의 cosine 유사도를 포함한 데이터쌍을 구상하여 KorSTS에서의 값들처럼 **0 ~ 1**사이의 값으로 구성했습니다.
 
-<div align="center">
-<img src="doc/KLUE2.png"> 
-</div>
+## ⚒️ Appendix
 
->- 기존 참고한 Sentence BERT 학습 코드에서 판결문 관련 custom 데이터를 추가함으로 유사 판결문을 더 잘 판별할 것으로 기대하였고, transformer도 바꿔가며 학습을 진행했습니다.
->- 트레이닝 코드 : [training_last.py](training_last.py), [data_util.py](data_util.py)
+
+| Reference | Git | Paper |
+| ---- | ---- | ---- |
+|  | | 
+|  |  | 
